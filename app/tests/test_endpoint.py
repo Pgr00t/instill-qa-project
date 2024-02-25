@@ -50,7 +50,8 @@ def test_get_meaning(client):
     and the response body matches the expected response body.
 
     """
-    response = client.post(f"{API_V1_STR}/get-word-meaning", json={"words": ["string"], "password": PASSWORD})
+    word = ["string"]
+    response = client.post(f"{API_V1_STR}/get-word-meaning", json={"words": word, "password": PASSWORD})
     assert response.status_code == HTTP_200_OK
     assert response.json() == EXPECTED_RESPONSE_BODY
 
@@ -75,7 +76,8 @@ def test_incorrect_password(client):
     is 403 Forbidden.
 
     """
-    response = client.post(f"{API_V1_STR}/get-word-meaning", json={"words": ["test"], "password": "incorrect"})
+    word = ["test"]
+    response = client.post(f"{API_V1_STR}/get-word-meaning", json={"words": word, "password": "incorrect"})
     assert response.status_code == HTTP_403_FORBIDDEN
 
 
@@ -88,12 +90,12 @@ def test_empty_response_from_service(client, mock_dictionary_service):
     meaning for the word. Checks if the response status code is 200 OK and the meaning retrieved is empty.
 
     """
-    word = "test"
+    word = ["test"]
     expected_meaning = []
 
     mock_dictionary_service.get_dictionary_meaning.return_value = expected_meaning
 
-    response = client.post(f"{API_V1_STR}/get-word-meaning", json={"words": [word], "password": PASSWORD})
+    response = client.post(f"{API_V1_STR}/get-word-meaning", json={"words": word, "password": PASSWORD})
 
     meaning = mock_dictionary_service.get_dictionary_meaning(word)
     mock_dictionary_service.get_dictionary_meaning.assert_called_once_with(word)
@@ -127,9 +129,10 @@ def test_get_multiple_word_meaning(client):
     200 OK, the number of meanings retrieved matches the expected number, and the meanings match the expected data.
 
     """
+    words = ["hello", "string"]
     response = client.post(
         f"{API_V1_STR}/get-word-meaning",
-        json={"words": ["hello", "string"], "password": PASSWORD})
+        json={"words": words, "password": PASSWORD})
 
     assert response.status_code == HTTP_200_OK
     assert len(response.json()) == 2
@@ -146,6 +149,7 @@ async def test_get_multiple_word_meaning_async(mocker):
     and if the response body matches the expected response body.
 
     """
+    words = ["hello", "string"]
     expected_response_body = EXPECTED_MULTIPLE_RESPONSE_BODY
 
     async_mock = mocker.AsyncMock(return_value=Response(status_code=200, json=expected_response_body))
@@ -154,7 +158,7 @@ async def test_get_multiple_word_meaning_async(mocker):
     async with AsyncClient(app=app, base_url=BASE_URL) as client:
         response = await client.post(
             f"{API_V1_STR}/get-word-meaning",
-            json={"words": ["hello", "string"], "password": PASSWORD}
+            json={"words": words, "password": PASSWORD}
         )
 
     assert response.status_code == HTTP_200_OK
@@ -169,10 +173,11 @@ def test_get_word_meaning_non_existent_word(client):
     a ResponseValidationError with status code 422 Unprocessable Entity.
 
     """
+    words = ["hello", "nongggexistent",]
     with pytest.raises(ResponseValidationError):
         response = client.post(
             f"{API_V1_STR}/get-word-meaning",
-            json={"words": ["hello", "nongggexistent",], "password": PASSWORD}
+            json={"words": words, "password": PASSWORD}
         )
 
         assert response.status_code == HTTP_422_UNPROCESSABLE_ENTITY
@@ -186,9 +191,9 @@ def test_encodings(client):
     response raises a ResponseValidationError with status code 422 Unprocessable Entity.
 
     """
-    word = "prüfung"
+    word = ["prüfung"]
     with pytest.raises(ResponseValidationError):
-        response = client.post(f"{API_V1_STR}/get-word-meaning", json={"words": [word], "password": PASSWORD})
+        response = client.post(f"{API_V1_STR}/get-word-meaning", json={"words": word, "password": PASSWORD})
         assert response.status_code == HTTP_422_UNPROCESSABLE_ENTITY
 
 def test_sql_injection(client):
@@ -199,9 +204,10 @@ def test_sql_injection(client):
     prevent SQL injection attacks and raise a ResponseValidationError with status code 422 Unprocessable Entity.
 
     """
-    words = ["hello'; DROP TABLE words;--"]
-    response = client.post(f"{API_V1_STR}/get-word-meaning", json={"words": [words], "password": PASSWORD})
-    assert response.status_code == HTTP_422_UNPROCESSABLE_ENTITY
+    with pytest.raises(ResponseValidationError):
+        words = ["hello'; DROP TABLE words;--"]
+        response = client.post(f"{API_V1_STR}/get-word-meaning", json={"words": words, "password": PASSWORD})
+        assert response.status_code == HTTP_422_UNPROCESSABLE_ENTITY
 
 
 def test_wrong_method(client):
@@ -224,7 +230,8 @@ def test_response_format(client):
     The endpoint should respond with status code 200 OK and the response body should contain 'meanings' key.
 
     """
-    response = client.post(f"{API_V1_STR}/get-word-meaning", json={"words": ["test"], "password": PASSWORD})
+    word = ["test"]
+    response = client.post(f"{API_V1_STR}/get-word-meaning", json={"words": word, "password": PASSWORD})
     json_data = response.json()
     assert json_data and 'meanings' in json_data[0]
 
@@ -270,8 +277,9 @@ def test_special_characters_in_password(client):
     The endpoint should correctly handle the special characters and respond with status code 403 Forbidden.
 
     """
+    word = ["test"]
     special_password = "p@ssw0rd!"
-    response = client.post(f"{API_V1_STR}/get-word-meaning", json={"words": ["test"], "password": special_password})
+    response = client.post(f"{API_V1_STR}/get-word-meaning", json={"words": word, "password": special_password})
     assert response.status_code == HTTP_403_FORBIDDEN
 
 
@@ -298,7 +306,8 @@ def test_invalid_route(client):
     The endpoint should respond with status code 404 Not Found.
 
     """
-    response = client.post("/invalid-route", json={"words": ["test"], "password": PASSWORD})
+    word = ["test"]
+    response = client.post("/invalid-route", json={"words": word, "password": PASSWORD})
     assert response.status_code == HTTP_404_NOT_FOUND
     time.sleep(60)
 
@@ -351,6 +360,7 @@ async def test_endpoint_handles_load_async():
     has a status code of 200 OK and contains the expected response body.
 
     """
+    word = ["string"]
     num_requests = 100
     tasks = []
     timeout = httpx.Timeout(30.0, read=60.0)
@@ -360,7 +370,7 @@ async def test_endpoint_handles_load_async():
                 asyncio.create_task(
                     client.post(
                         f"{BASE_URL}{API_V1_STR}/get-word-meaning",
-                        json={"words": ["string"], "password": PASSWORD}
+                        json={"words": word, "password": PASSWORD}
                     )
                 )
             )

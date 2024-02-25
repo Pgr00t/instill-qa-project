@@ -118,7 +118,7 @@ During the testing process, the following bugs were identified:
 
 4. **Load Handling Issue with Large Words**: The endpoint failed to handle a high load of requests concurrently when large words were included in the request payload. This resulted in unexpected behavior and test failures. Additional optimizations may be necessary to improve the endpoint's performance under heavy loads.
 
-   - **Affected Test Cases**: `test_large_request_body`
+   - **Affected Test Cases**: `test_large_request_body`, `test_load`
 `
 
 ## Prerequisites
@@ -149,7 +149,7 @@ Screenshots of test run:
 It's important to note that due to the nature of the tests and potential environmental factors, test results may vary across different environments. If a test fails unexpectedly, consider rerunning the test multiple times to ensure consistency. You can also run tests one by one for better control and consistency:
 
 ```bash
-pytest -v -k test_function_name
+pytest -vv -k test_function_name
 ```
 
 Additionally, when the synchronous function of the dictionary service is commented out, only two specific tests (`test_get_meaning_mock` and `test_empty_response_from_service`) won't work as expected. Ensure that these tests are properly handled or accounted for when making changes to the dictionary service implementation.
