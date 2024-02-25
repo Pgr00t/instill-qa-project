@@ -3,7 +3,15 @@
 ## Introduction
 This document serves as a guide for testing the dictionary endpoint and contains a bug report for identified issues in the code. It outlines the test cases implemented, instructions on running the tests, and details on encountered bugs.
 
-## Test Cases
+## Manual Testing Documentation
+
+[Instill Flow Manual QA Test Cases](https://docs.google.com/spreadsheets/d/14Z2afhiWXEfihZJg5iiKgQSg2F1kl5vyoXOdFXEE-B0/edit?usp=sharing)
+
+This spreadsheet contains a comprehensive set of manual test cases for the Instill Flow feature. Each test case is designed to validate different aspects of the feature's functionality. Test cases are organized by their Test Case ID, Description, Test Steps, Expected Result, Actual Result, and Pass/Fail status.
+
+Feel free to use this document for manual testing of the Instill Flow feature.
+
+## Automation Test Cases
 
 ### Test Fixtures:
 
