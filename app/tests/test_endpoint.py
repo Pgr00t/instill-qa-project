@@ -3,6 +3,7 @@ import pytest
 import httpx
 import json
 import asyncio
+import time
 from httpx import AsyncClient, Response
 from app.config import PASSWORD, API_V1_STR
 from app.tests.constants import EXPECTED_RESPONSE_BODY, EXPECTED_MULTIPLE_RESPONSE_BODY, BASE_URL
@@ -171,7 +172,7 @@ def test_get_word_meaning_non_existent_word(client):
     with pytest.raises(ResponseValidationError):
         response = client.post(
             f"{API_V1_STR}/get-word-meaning",
-            json={"words": ["hello", "nongg_gexistent",], "password": PASSWORD}
+            json={"words": ["hello", "nongggexistent",], "password": PASSWORD}
         )
 
         assert response.status_code == HTTP_422_UNPROCESSABLE_ENTITY
@@ -299,6 +300,7 @@ def test_invalid_route(client):
     """
     response = client.post("/invalid-route", json={"words": ["test"], "password": PASSWORD})
     assert response.status_code == HTTP_404_NOT_FOUND
+    time.sleep(60)
 
 
 def test_load(client):
@@ -323,6 +325,8 @@ def test_load(client):
         assert response.status_code == HTTP_200_OK
         assert response.json() == EXPECTED_RESPONSE_BODY
 
+    time.sleep(60)
+
 
 def test_large_request_body(client):
     """
@@ -335,10 +339,11 @@ def test_large_request_body(client):
     large_words = ["word"] * 1000
     response = client.post(f"{API_V1_STR}/get-word-meaning", json={"words": large_words, "password": PASSWORD})
     assert response.status_code == HTTP_422_UNPROCESSABLE_ENTITY
+    time.sleep(60)
 
 
 @pytest.mark.asyncio
-async def test_endpoint_handles_load():
+async def test_endpoint_handles_load_async():
     """
     Test case to verify that the endpoint can handle a high load of requests concurrently.
 
