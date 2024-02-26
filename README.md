@@ -1,7 +1,7 @@
 # Dictionary Endpoint Testing and Bug Report
 
 ## Introduction
-This document serves as a guide for testing the dictionary endpoint and contains a bug report for identified issues in the code. It outlines the test cases implemented, instructions on running the tests, and details on encountered bugs.
+This document serves as a comprehensive guide for testing the dictionary endpoint and includes a bug report for identified issues within the codebase. It outlines the test cases implemented, instructions for running the tests, details on encountered bugs, and refers to the Manual Testing Documentation for Instill Flow feature.
 
 ## Manual Testing Documentation
 
@@ -154,13 +154,27 @@ Screenshots of test run:
 
 ## Note on Test Execution
 
-It's important to note that due to the nature of the tests and potential environmental factors, test results may vary across different environments. If a test fails unexpectedly, consider rerunning the test multiple times to ensure consistency. You can also run tests one by one for better control and consistency:
+It's important to note that due to the nature of the tests and potential environmental factors, test results may vary across different environments. If a test fails unexpectedly, consider rerunning the test multiple times to ensure consistency. Additionally, although all tests are designed to work independently, if a test fails during CI, running it alone may help isolate and troubleshoot the issue more effectively.
 
 ```bash
 pytest -vv -k test_function_name
 ```
 
 Additionally, when the synchronous function of the dictionary service is commented out, only two specific tests (`test_get_meaning_mock` and `test_empty_response_from_service`) won't work as expected. Ensure that these tests are properly handled or accounted for when making changes to the dictionary service implementation.
+
+## Continuous Integration (CI)
+
+As an additional feature, this project includes a Continuous Integration (CI) workflow. The CI workflow is automatically triggered on every push to the `main` branch. It ensures that changes made to the codebase pass all tests before being merged into the main branch.
+
+### How it Works
+
+The CI workflow consists of the following steps:
+- Upon a push to the `endpoint-testcases` branch, the CI workflow is triggered.
+- The workflow runs tests on the codebase to ensure its integrity.
+- If all tests pass successfully, the changes are considered safe for merging into the main branch.
+
+### Usage
+The CI workflow helps maintain the stability and reliability of the codebase by automatically testing changes before they are integrated into the main branch.
 
 ## Conclusion
 The provided test cases cover various scenarios to ensure the functionality and reliability of the dictionary endpoint. By addressing the identified bugs and running the tests, we can verify that the endpoint behaves as expected under different conditions.
