@@ -357,7 +357,7 @@ async def test_endpoint_handles_load_async():
     Test case to verify that the endpoint can handle a high load of requests concurrently.
 
     Sends multiple concurrent POST requests to the endpoint and checks that each response
-    has a status code of 200 OK and contains the expected response body.
+    has a status code of 200 OK and contains the expected response body .
 
     """
     word = ["string"]
